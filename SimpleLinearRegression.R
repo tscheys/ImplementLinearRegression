@@ -1,37 +1,34 @@
 # Implementation of Simple Linear Regression 
 
 getBetas = function(x, y) {
-  #test if x and y are of equal length
-  if(length(x) != length(y)) {
-    tryCatch(simpleError("predictor and response are not of equal length!"))
-  } else {
-    X = mean(x)
-    Y = mean(y)
-    
+    #B1 = somm((xi - avg x)(yi-avg y)) / somm(xi - avg x)^2
     B1 = getNumerator(x,y) / getDenumerator(x)
     #B0 = avg(y) - B1 * avg(x)
-    B0 = Y - B1 * X
-    
+    B0 = mean(y) - B1 * mean(x)
     return(c(B0,B1))
-  }
 }
 
-
-getFittedValues <- function(coefficients, predictor) {
+getFittedValues <- function(coefficients, x) {
   fittedValues = rep(0, length(predictor))
-  for(i in 1:length(predictor)) {
+  for(i in 1:length(x)) {
     #fitted.values = b0 + b1*x
-    fittedValues[i] = coefficients[1] + coefficients[2] * predictor[i]
+    fittedValues[i] = coefficients[1] + coefficients[2] * x[i]
   }
   return(fittedValues)
 }
 
-#residuals = y - yhat
-residuals <- y - getFittedValues(getBetas(x,y), x)
-#RSS = (yi - y)^2 
-RSS = sum((residuals)^2)
-#RSE = sqrt(RSS/n-2)
-RSE = sqrt(RSS/(length(x) - 2))
+getErrorStatistics = function(x,y) {
+  #residuals = y - yhat
+  residuals <- y - getFittedValues(getBetas(x,y), x)
+  #RSS = (yi - y)^2 
+  RSS = sum((residuals)^2)
+  #RSE = sqrt(RSS/n-2)
+  RSE = sqrt(RSS/(length(x) - 2))
+  
+  return(residuals, RSS, RSE)
+}
+
+
 getNumerator <- function(x,y) {
   numerator = 0
   for (i in 1:length(x)){
