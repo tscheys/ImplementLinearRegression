@@ -30,19 +30,24 @@ getBetas = function(x, y) {
 }
 
 getFittedValues <- function(coefficients, predictor) {
+
   fittedValues = rep(0, length(predictor))
   for(i in 1:length(predictor)) {
-    fittedValues = coefficients[1] + coefficients[2] * x
+    #fitted.values = b0 + b1*x
+    fittedValues[i] = coefficients[1] + coefficients[2] * predictor[i]
   }
   return(fittedValues)
 }
 
-RSS = (y - getFittedValues(getBetas(x,y), x))^2
+#residuals = y - yhat
+residuals <- y - getFittedValues(getBetas(x,y), x)
+#RSS = (yi - y)^2 
+RSS = sum((residuals)^2)
+#RSE = sqrt(RSS/n-2)
+RSE = sqrt(RSS/(length(x) - 2))
 
 #ook formule voor SE parameters maken
-#fitted.values = b0 + b1*x
-#RSS = (yi - y)^2 
-#RSE = sqrt(RSS/n-2) 
+
 #(SE B0) ^2 = o^2 (1/n +  [    (avg(x)^2)/somm(   (xi-avg(x))^2  ) ]    )
 
 
