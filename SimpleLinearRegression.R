@@ -7,16 +7,8 @@ getBetas = function(x, y) {
   } else {
     X = mean(x)
     Y = mean(y)
-    numerator = 0
-    denumerator = 0
     
-    for (i in 1:length(x)){
-      #calculating B1
-      #B1 = somm((xi - avg x)(yi-avg y)) / somm(xi - avg x)^2
-      numerator = numerator + (x[i] - X) * (y[i] - Y)
-      denumerator = denumerator + (x[i] - X)^2
-    }
-    B1 = numerator / denumerator
+    B1 = getNumerator(x,y) / getDenumerator(x)
     #B0 = avg(y) - B1 * avg(x)
     B0 = Y - B1 * X
     
@@ -40,8 +32,23 @@ residuals <- y - getFittedValues(getBetas(x,y), x)
 RSS = sum((residuals)^2)
 #RSE = sqrt(RSS/n-2)
 RSE = sqrt(RSS/(length(x) - 2))
-
-#ook formule voor SE parameters maken
+getNumerator <- function(x,y) {
+  numerator = 0
+  for (i in 1:length(x)){
+    #calculating B1
+    #numerator = somm((xi - avg x)(yi-avg y)) 
+    numerator = numerator + (x[i] - X) * (y[i] - Y)
+  }
+  return(numerator)
+}
+getDenumerator <- function(x) {
+  denumerator = 0
+  for (i in 1:length(x)){
+    #denumerator = somm(xi - avg x)^2
+    denumerator = denumerator + (x[i] - X)^2
+  }
+  return(denumerator)
+}
 
 #(SE B0) ^2 = o^2 (1/n +  [    (avg(x)^2)/somm(   (xi-avg(x))^2  ) ]    )
 getStandardErrors <- function(x,y) {
@@ -59,8 +66,8 @@ getStandardErrors <- function(x,y) {
   return(c(SEB0, SEB1))
 }
 
-getConfidenceIntervals <- function(betas, standarderrors) {
-  return(c(betas[1] - 2*standarderrors[1], betas[1] + 2*standarderrors[1] , betas[2] - 2*standarderrors[2], betas[2] + 2*standarderrors[2]))
+getConfidenceIntervals <- function(beta, se) {
+  return(c(betas[1] - 2*se[1], betas[1] + 2*se[1] , betas[2] - 2*se[2], betas[2] + 2*se[2]))
 }
 
 #ook formule voor betrouwbaarheidsintervallen maken (95%)
