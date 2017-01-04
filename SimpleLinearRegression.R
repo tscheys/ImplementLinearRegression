@@ -29,8 +29,8 @@ getBetas = function(x, y) {
   }
 }
 
-getFittedValues <- function(coefficients, predictor) {
 
+getFittedValues <- function(coefficients, predictor) {
   fittedValues = rep(0, length(predictor))
   for(i in 1:length(predictor)) {
     #fitted.values = b0 + b1*x
@@ -49,7 +49,17 @@ RSE = sqrt(RSS/(length(x) - 2))
 #ook formule voor SE parameters maken
 
 #(SE B0) ^2 = o^2 (1/n +  [    (avg(x)^2)/somm(   (xi-avg(x))^2  ) ]    )
+X = mean(x)
+Y = mean(y)
+denumerator = 0
 
+for(i in 1:length(x)) {
+  denumerator = denumerator + (x[i] - X)^2
+}
+
+#estimated squared standard errors for B0 and B1
+SE2B0 = RSE^2 * (1/length(x) + X^2/denumerator)
+SE2B1 = RSE^2 / denumerator
 
 
 #ook formule voor betrouwbaarheidsintervallen maken (95%)
