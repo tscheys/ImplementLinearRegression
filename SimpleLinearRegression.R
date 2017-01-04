@@ -25,7 +25,7 @@ getErrorStatistics = function(x,y) {
   #RSE = sqrt(RSS/n-2)
   RSE = sqrt(RSS/(length(x) - 2))
   
-  return(residuals, RSS, RSE)
+  return(list(residuals=residuals, RSS=RSS, RSE=RSE))
 }
 
 
@@ -51,15 +51,11 @@ getDenumerator <- function(x) {
 getStandardErrors <- function(x,y) {
   X = mean(x)
   Y = mean(y)
-  denumerator = 0
-  
-  for(i in 1:length(x)) {
-    denumerator = denumerator + (x[i] - X)^2
-  }
+  RSE = getErrorStatistics(x,y)$RSE
   
   #estimated squared standard errors for B0 and B1
-  SEB0 = sqrt(RSE^2 * (1/length(x) + X^2/denumerator))
-  SEB1 = sqrt(RSE^2 / denumerator)
+  SEB0 = sqrt(RSE^2 * (1/length(x) + X^2/getDenumerator(x)))
+  SEB1 = sqrt(RSE^2 / getDenumerator(x))
   return(c(SEB0, SEB1))
 }
 
@@ -79,5 +75,7 @@ getConfidenceIntervals <- function(beta, se) {
 set.seed(100)
 x <- rnorm(100)
 y <- x + rnorm(100, mean=5, sd=2)
+
+getStandardErrors(x,y)
 
 getConfidenceIntervals(getBetas(x,y), getStandardErrors(x,y))
