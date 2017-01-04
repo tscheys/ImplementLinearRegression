@@ -29,28 +29,18 @@ getErrorStatistics = function(x,y) {
 }
 
 
-getNumerator <- function(x,y) {
-  numerator = 0
-  for (i in 1:length(x)){
-    #calculating B1
-    #numerator = somm((xi - avg x)(yi-avg y)) 
-    numerator = numerator + (x[i] - X) * (y[i] - Y)
-  }
-  return(numerator)
+getNumerator = function(x,y) {
+  Y = mean(y)
+  X = mean(x)
+  return(sum(mapply(function(x,y) (x - X) * (y - Y), x, y)))
 }
-getDenumerator <- function(x) {
-  denumerator = 0
-  for (i in 1:length(x)){
-    #denumerator = somm(xi - avg x)^2
-    denumerator = denumerator + (x[i] - X)^2
-  }
-  return(denumerator)
+getDenumerator = function(x) {
+  X = mean(x)
+  return(sum(sapply(x, function(x) {(x - X)^2})))
 }
 
 #(SE B0) ^2 = o^2 (1/n +  [    (avg(x)^2)/somm(   (xi-avg(x))^2  ) ]    )
 getStandardErrors <- function(x,y) {
-  X = mean(x)
-  Y = mean(y)
   RSE = getErrorStatistics(x,y)$RSE
   
   #estimated squared standard errors for B0 and B1
@@ -60,17 +50,12 @@ getStandardErrors <- function(x,y) {
 }
 
 getConfidenceIntervals <- function(beta, se) {
+  #BI: B +- 2SE(B)
   return(c(betas[1] - 2*se[1], betas[1] + 2*se[1] , betas[2] - 2*se[2], betas[2] + 2*se[2]))
 }
 
-#ook formule voor betrouwbaarheidsintervallen maken (95%)
-
-#BI: B +- 2SE(B)
-
-#formule om p waarde geassocieerd met Ho: B=0 te bepalen 
 
 # TESTS 
-
 # x and y variables to test code 
 set.seed(100)
 x <- rnorm(100)
