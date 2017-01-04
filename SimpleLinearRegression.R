@@ -1,10 +1,5 @@
 # Implementation of Simple Linear Regression 
 
-# x and y variables to test code 
-set.seed(100)
-x <- rnorm(100)
-y <- x + rnorm(100, mean=5, sd=2)
-
 getBetas = function(x, y) {
   #test if x and y are of equal length
   if(length(x) != length(y)) {
@@ -49,18 +44,24 @@ RSE = sqrt(RSS/(length(x) - 2))
 #ook formule voor SE parameters maken
 
 #(SE B0) ^2 = o^2 (1/n +  [    (avg(x)^2)/somm(   (xi-avg(x))^2  ) ]    )
-X = mean(x)
-Y = mean(y)
-denumerator = 0
-
-for(i in 1:length(x)) {
-  denumerator = denumerator + (x[i] - X)^2
+getStandardErrors <- function(x,y) {
+  X = mean(x)
+  Y = mean(y)
+  denumerator = 0
+  
+  for(i in 1:length(x)) {
+    denumerator = denumerator + (x[i] - X)^2
+  }
+  
+  #estimated squared standard errors for B0 and B1
+  SEB0 = sqrt(RSE^2 * (1/length(x) + X^2/denumerator))
+  SEB1 = sqrt(RSE^2 / denumerator)
+  return(c(SEB0, SEB1))
 }
 
-#estimated squared standard errors for B0 and B1
-SE2B0 = RSE^2 * (1/length(x) + X^2/denumerator)
-SE2B1 = RSE^2 / denumerator
-
+getConfidenceIntervals <- function(betas, standarderrors) {
+  return(c(betas[1] - 2*standarderrors[1], betas[1] + 2*standarderrors[1] , betas[2] - 2*standarderrors[2], betas[2] + 2*standarderrors[2]))
+}
 
 #ook formule voor betrouwbaarheidsintervallen maken (95%)
 
@@ -69,3 +70,10 @@ SE2B1 = RSE^2 / denumerator
 #formule om p waarde geassocieerd met Ho: B=0 te bepalen 
 
 # TESTS 
+
+# x and y variables to test code 
+set.seed(100)
+x <- rnorm(100)
+y <- x + rnorm(100, mean=5, sd=2)
+
+getConfidenceIntervals(getBetas(x,y), getStandardErrors(x,y))
