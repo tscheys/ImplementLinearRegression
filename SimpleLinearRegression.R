@@ -9,12 +9,7 @@ getBetas = function(x, y) {
 }
 
 getFittedValues <- function(coefficients, x) {
-  fittedValues = rep(0, length(predictor))
-  for(i in 1:length(x)) {
-    #fitted.values = b0 + b1*x
-    fittedValues[i] = coefficients[1] + coefficients[2] * x[i]
-  }
-  return(fittedValues)
+  return(sapply(x, function(x) coefficients[1] + coefficients[2] * x))
 }
 
 getErrorStatistics = function(x,y) {
@@ -28,15 +23,12 @@ getErrorStatistics = function(x,y) {
   return(list(residuals=residuals, RSS=RSS, RSE=RSE))
 }
 
-
 getNumerator = function(x,y) {
-  Y = mean(y)
-  X = mean(x)
-  return(sum(mapply(function(x,y) (x - X) * (y - Y), x, y)))
+  return(sum(mapply(function(xi,yi) (xi - mean(x)) * (yi - mean(y)), x, y)))
 }
+
 getDenumerator = function(x) {
-  X = mean(x)
-  return(sum(sapply(x, function(x) {(x - X)^2})))
+  return(sum(sapply(x, function(xi) {(xi - mean(x))^2})))
 }
 
 #(SE B0) ^2 = o^2 (1/n +  [    (avg(x)^2)/somm(   (xi-avg(x))^2  ) ]    )
@@ -53,14 +45,3 @@ getConfidenceIntervals <- function(beta, se) {
   #BI: B +- 2SE(B)
   return(c(betas[1] - 2*se[1], betas[1] + 2*se[1] , betas[2] - 2*se[2], betas[2] + 2*se[2]))
 }
-
-
-# TESTS 
-# x and y variables to test code 
-set.seed(100)
-x <- rnorm(100)
-y <- x + rnorm(100, mean=5, sd=2)
-
-getStandardErrors(x,y)
-
-getConfidenceIntervals(getBetas(x,y), getStandardErrors(x,y))
