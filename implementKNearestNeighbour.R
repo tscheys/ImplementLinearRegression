@@ -44,4 +44,6 @@ table(preds, y)
 #lessons learned: 
 #order is sort for vector indexes
 #cmd enter on function runs multiple lines 
+#microbenchmark is a fast way to compare lines of code 
+#diag() might be faster than t() on large datasets 
 #to do: algorithm selects observation it needs to predict
